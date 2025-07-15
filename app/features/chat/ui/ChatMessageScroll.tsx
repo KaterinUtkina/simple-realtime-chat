@@ -1,5 +1,8 @@
 import { ReactNode, useCallback, useEffect, useRef } from "react";
-import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from "overlayscrollbars-react";
+import {
+  OverlayScrollbarsComponent,
+  OverlayScrollbarsComponentRef,
+} from "overlayscrollbars-react";
 import { eventBus } from "@/app/shared/services/EventBus";
 import { ChatEvents } from "@/app/features/chat/enum";
 

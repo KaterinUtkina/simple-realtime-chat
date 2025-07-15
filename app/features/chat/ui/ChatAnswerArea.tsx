@@ -13,7 +13,9 @@ type ChatAnswerAreaProps = {
   }) => void;
   isTouchDevice: boolean;
 };
-const ChatAnswerArea = memo(function ChatAnswerArea(props: ChatAnswerAreaProps) {
+const ChatAnswerArea = memo(function ChatAnswerArea(
+  props: ChatAnswerAreaProps,
+) {
   const {
     rows,
     handleChange,
@@ -31,14 +33,19 @@ const ChatAnswerArea = memo(function ChatAnswerArea(props: ChatAnswerAreaProps) 
 
   return (
     <div onKeyDown={handleKeyDown} className={"pb-4"}>
-      <ul className={"flex gap-4 justify-between mb-4 flex-wrap"} ref={optionsRef}>
+      <ul
+        className={"flex gap-4 justify-between mb-4 flex-wrap"}
+        ref={optionsRef}
+      >
         {options &&
           Object.keys(options).map((optionKey, index) => (
             <li
               onClick={() => toggleChecked(optionKey)}
               key={index}
               className={`py-2 px-6 bg-violet-200 rounded-lg cursor-pointer box-border grow text-center hover:outline-2 hover:outline-violet-400 ${
-                options && options[optionKey] ? "outline-2 outline-violet-400" : ""
+                options && options[optionKey]
+                  ? "outline-2 outline-violet-400"
+                  : ""
               }`}
             >
               {optionKey}
@@ -59,7 +66,9 @@ const ChatAnswerArea = memo(function ChatAnswerArea(props: ChatAnswerAreaProps) 
         </label>
         <button
           type={"button"}
-          className={"rounded-md p-1 shrink-0 mt-auto absolute right-14 bottom-1.5"}
+          className={
+            "rounded-md p-1 shrink-0 mt-auto absolute right-14 bottom-1.5"
+          }
           onClick={recordHandler}
         >
           {isRecord ? (
@@ -70,7 +79,9 @@ const ChatAnswerArea = memo(function ChatAnswerArea(props: ChatAnswerAreaProps) 
         </button>
         <button
           type={"button"}
-          className={"bg-violet-400 p-2.5 rounded-md shrink-0 mt-auto absolute right-2 bottom-1.5"}
+          className={
+            "bg-violet-400 p-2.5 rounded-md shrink-0 mt-auto absolute right-2 bottom-1.5"
+          }
           onClick={submitHandler}
         >
           <SendIcon className={"w-4 h-4 fill-white"} />

@@ -35,7 +35,9 @@ export function useChat() {
       ];
 
       setQuestions(newQuestions);
-      setOptionsQuestions(questionsMock[questionsList.length].options as string[]);
+      setOptionsQuestions(
+        questionsMock[questionsList.length].options as string[],
+      );
       setActiveQuestionId(questionsMock[questionsList.length].id);
     }, 500);
   }, []);
@@ -67,7 +69,11 @@ export function useChat() {
   );
 
   const sendAnswerAndGetQuestion = useCallback(
-    async (params: AnswerRequest, questionsList: QuestionTemplate[], answerIndex: number) => {
+    async (
+      params: AnswerRequest,
+      questionsList: QuestionTemplate[],
+      answerIndex: number,
+    ) => {
       try {
         await sendAnswer();
 
@@ -115,7 +121,9 @@ export function useChat() {
 
       startAnswerLoading();
 
-      const updateAnswer = questions.find((item) => item.id === activeQuestionId)?.answer[index];
+      const updateAnswer = questions.find(
+        (item) => item.id === activeQuestionId,
+      )?.answer[index];
 
       if (!updateAnswer || !activeQuestionId) return;
 
@@ -159,7 +167,11 @@ export function useChat() {
   }, [getQuestionHandler]);
 
   const sendAnswerHandler = useCallback(
-    async (params: { freeAnswer: string; options: string[]; audio: HTMLAudioElement | null }) => {
+    async (params: {
+      freeAnswer: string;
+      options: string[];
+      audio: HTMLAudioElement | null;
+    }) => {
       if (answerLoading || questionLoading || !activeQuestionId) return;
 
       const answerIndex = activeAnswerIndex;

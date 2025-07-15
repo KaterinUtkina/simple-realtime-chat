@@ -1,4 +1,11 @@
-import { ChangeEvent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { AudioRecorderPlugin } from "audio-recorder-plugin";
 import { useAfterRender } from "@/app/shared/hooks/useAfterRender";
 import { eventBus } from "@/app/shared/services/EventBus";
@@ -35,7 +42,14 @@ export function useChatAnswer(props: ChatAnswerAreaProps) {
   );
 
   const submitHandler = useCallback(() => {
-    if (!(answer.length || (options && Object.values(options).includes(true)) || audio)) return;
+    if (
+      !(
+        answer.length ||
+        (options && Object.values(options).includes(true)) ||
+        audio
+      )
+    )
+      return;
 
     const checkedOptions = options
       ? Object.keys(options).filter((option) => {
