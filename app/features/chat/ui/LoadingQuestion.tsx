@@ -1,9 +1,9 @@
-import {memo} from "react";
+import { memo } from "react";
 import UserIcon from "@/app/shared/ui/icon/UserIcon.svg";
-import {Dot} from "@/app/features/chat/styles";
+import { Dot } from "@/app/features/chat/styles";
 
 const LoadingQuestion = memo(function LoadingQuestion() {
-  return(
+  return (
     <div className="flex gap-4 mb-5 items-start">
       <div className="flex items-center justify-center bg-violet-400 w-10 h-10 rounded-full overflow-hidden">
         <UserIcon className="w-full h-full pt-1 fill-white" />
@@ -16,7 +16,7 @@ const LoadingQuestion = memo(function LoadingQuestion() {
         </div>
       </div>
     </div>
-  )
+  );
 });
 
 export default LoadingQuestion;

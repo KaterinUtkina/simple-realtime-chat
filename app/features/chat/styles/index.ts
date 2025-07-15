@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes } from "styled-components";
 
 const ldsDefault = keyframes`
   0%, 20%, 80%, 100% {
@@ -16,5 +16,5 @@ export const Dot = styled.span<{ $delay: string }>`
   border-radius: 9999px;
   display: inline-block;
   animation: ${ldsDefault} 1.2s linear infinite;
-  animation-delay: ${props => props.$delay};
+  animation-delay: ${(props) => props.$delay};
 `;

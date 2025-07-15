@@ -1,24 +1,20 @@
-"use client";
-
-import {ChangeEvent, KeyboardEventHandler, useCallback, useEffect, useRef, useState} from "react";
-import {AudioRecorderPlugin} from "audio-recorder-plugin";
-import {useAfterRender} from "@/app/shared/hooks/useAfterRender";
-import {eventBus} from "@/app/shared/services/EventBus";
-import {ChatEvents} from "@/app/features/chat/enum";
+import { ChangeEvent, KeyboardEventHandler, useCallback, useEffect, useRef, useState } from "react";
+import { AudioRecorderPlugin } from "audio-recorder-plugin";
+import { useAfterRender } from "@/app/shared/hooks/useAfterRender";
+import { eventBus } from "@/app/shared/services/EventBus";
+import { ChatEvents } from "@/app/features/chat/enum";
 
 type ChatAnswerAreaProps = {
-  options: string[],
+  options: string[];
   sendAnswerHandler: (params: {
-    freeAnswer: string,
-    options: string[],
-    audio: HTMLAudioElement | null
-  }) => void,
-  isTouchDevice: boolean
-}
+    freeAnswer: string;
+    options: string[];
+    audio: HTMLAudioElement | null;
+  }) => void;
+  isTouchDevice: boolean;
+};
 
-export function useChatAnswer(
-  props: ChatAnswerAreaProps
-) {
+export function useChatAnswer(props: ChatAnswerAreaProps) {
   const [answer, setAnswer] = useState<string>("");
   const [rows, setRows] = useState(1);
   const [options, setOptions] = useState<Record<string, boolean> | null>(null);
@@ -35,24 +31,22 @@ export function useChatAnswer(
         eventBus.emit(ChatEvents.OPTIONS_RENDERED);
       }
     }, []),
-    [options]
+    [options],
   );
 
   const submitHandler = useCallback(() => {
-    if (!(answer.length
-      || (options && Object.values(options)
-        .includes(true))
-      || audio
-    )) return;
+    if (!(answer.length || (options && Object.values(options).includes(true)) || audio)) return;
 
-    const checkedOptions = options ? Object.keys(options).filter(option => {
-      return options[option];
-    }) : [];
+    const checkedOptions = options
+      ? Object.keys(options).filter((option) => {
+          return options[option];
+        })
+      : [];
 
     const params = {
       freeAnswer: answer,
       options: checkedOptions,
-      audio: audio
+      audio: audio,
     };
 
     props.sendAnswerHandler(params);
@@ -63,7 +57,7 @@ export function useChatAnswer(
     const optionsTemplate = props.options.reduce((acc, option) => {
       return {
         ...acc,
-        [option]: false
+        [option]: false,
       };
     }, {});
 
@@ -104,11 +98,11 @@ export function useChatAnswer(
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
-    if (event.key === 'Enter' && event.shiftKey) {
+    if (event.key === "Enter" && event.shiftKey) {
       return;
     }
 
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
 
       submitHandler();
@@ -121,19 +115,21 @@ export function useChatAnswer(
     setAudio(null);
   };
 
-  const settingsTextarea = props.isTouchDevice ? {
-    autoFocus: false
-  } : {
-    autoFocus: true,
-    onBlur: handleBlur
-  };
+  const settingsTextarea = props.isTouchDevice
+    ? {
+        autoFocus: false,
+      }
+    : {
+        autoFocus: true,
+        onBlur: handleBlur,
+      };
 
   const toggleChecked = (item: string) => {
-    setOptions(prevState => {
+    setOptions((prevState) => {
       if (!prevState) return null;
       return {
         ...prevState,
-        [item]: !prevState[item]
+        [item]: !prevState[item],
       };
     });
   };
@@ -148,7 +144,7 @@ export function useChatAnswer(
       await recorder.current.startRecording();
       setIsRecord(true);
     } catch (error) {
-      console.error('Error starting the audio recorder:', error);
+      console.error("Error starting the audio recorder:", error);
     }
   };
 
@@ -158,7 +154,7 @@ export function useChatAnswer(
       setIsRecord(false);
       setAudio(audio);
     } catch (error) {
-      console.error('Error stopping the audio recorder:', error);
+      console.error("Error stopping the audio recorder:", error);
     }
   };
 

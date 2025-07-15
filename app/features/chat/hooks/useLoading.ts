@@ -1,6 +1,4 @@
-"use client";
-
-import {useCallback, useState} from "react";
+import { useCallback, useState } from "react";
 
 export function useLoading() {
   const [loading, setLoading] = useState(false);
@@ -11,6 +9,6 @@ export function useLoading() {
   return {
     loading,
     startLoading,
-    stopLoading
+    stopLoading,
   };
 }

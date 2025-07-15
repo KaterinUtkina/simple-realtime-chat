@@ -1,14 +1,13 @@
-"use client"
-import {useChat} from "@/app/features/chat/hooks/useChat";
+"use client";
+import { useChat } from "@/app/features/chat/hooks/useChat";
 import ChatMessages from "@/app/features/chat/ui/ChatMessages";
 import dynamic from "next/dynamic";
-import {Suspense} from "react";
+import { Suspense } from "react";
 import "overlayscrollbars/styles/overlayscrollbars.css";
 
-const ChatAnswerArea = dynamic(
-  () => import("@/app/features/chat/ui/ChatAnswerArea"),
-  { ssr: false }
-);
+const ChatAnswerArea = dynamic(() => import("@/app/features/chat/ui/ChatAnswerArea"), {
+  ssr: false,
+});
 
 const Chat = () => {
   const {

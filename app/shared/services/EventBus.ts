@@ -7,17 +7,17 @@ class EventBus<Events extends string> {
     if (!this.events[event]) {
       this.events[event] = [];
     }
-        this.events[event]!.push(handler);
+    this.events[event]!.push(handler);
   }
 
   off(event: Events, handler: EventHandler) {
     if (!this.events[event]) return;
-    this.events[event] = this.events[event]!.filter(h => h !== handler);
+    this.events[event] = this.events[event]!.filter((h) => h !== handler);
   }
 
   emit(event: Events) {
     if (!this.events[event]) return;
-        this.events[event]!.forEach(handler => handler());
+    this.events[event]!.forEach((handler) => handler());
   }
 }
 

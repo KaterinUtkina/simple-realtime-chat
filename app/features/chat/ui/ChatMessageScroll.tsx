@@ -1,16 +1,13 @@
-"use client"
-import {ReactNode, useCallback, useEffect, useRef} from 'react';
-import {OverlayScrollbarsComponent, OverlayScrollbarsComponentRef} from "overlayscrollbars-react";
-import {eventBus} from "@/app/shared/services/EventBus";
-import {ChatEvents} from "@/app/features/chat/enum";
+import { ReactNode, useCallback, useEffect, useRef } from "react";
+import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from "overlayscrollbars-react";
+import { eventBus } from "@/app/shared/services/EventBus";
+import { ChatEvents } from "@/app/features/chat/enum";
 
 type CustomScrollProps = {
-  children: ReactNode,
-}
+  children: ReactNode;
+};
 
-const ChatMessageScroll = (
-  props: CustomScrollProps
-) => {
+const ChatMessageScroll = (props: CustomScrollProps) => {
   const ref = useRef<OverlayScrollbarsComponentRef>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +38,6 @@ const ChatMessageScroll = (
     if (contentRef.current) {
       scrollContent();
     }
-
   }, [props.children]);
 
   useEffect(() => {
@@ -49,17 +45,12 @@ const ChatMessageScroll = (
 
     return () => {
       destroyEvents();
-    }
+    };
   }, [destroyEvents, initEvents]);
 
   return (
-    <OverlayScrollbarsComponent
-      ref={ref}
-      style={{ height: "100%" }}
-      defer>
-      <div ref={contentRef}>
-        {props.children}
-      </div>
+    <OverlayScrollbarsComponent ref={ref} style={{ height: "100%" }} defer>
+      <div ref={contentRef}>{props.children}</div>
     </OverlayScrollbarsComponent>
   );
 };

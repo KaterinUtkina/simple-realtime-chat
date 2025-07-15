@@ -1,20 +1,23 @@
-"use client";
-import {useCallback, useEffect, useState} from "react";
-import {useLoading} from "@/app/features/chat/hooks/useLoading";
+import { useCallback, useEffect, useState } from "react";
+import { useLoading } from "@/app/features/chat/hooks/useLoading";
 import questionsMock from "@/app/config/questions.json";
-import {AnswerRequest, QuestionTemplate} from "@/app/features/chat/types";
+import { AnswerRequest, QuestionTemplate } from "@/app/features/chat/types";
 
 export function useChat() {
-  const [questions, setQuestions]
-      = useState<QuestionTemplate[]>([]);
-  const [activeQuestionId, setActiveQuestionId]
-      = useState<string | null>(null);
-  const {loading: answerLoading, startLoading: startAnswerLoading, stopLoading: stopAnswerLoading} = useLoading();
-  const {loading: questionLoading, startLoading: startQuestionLoading, stopLoading: stopQuestionLoading} = useLoading();
-  const [activeAnswerIndex, setActiveAnswerIndex]
-      = useState(0);
-  const [optionsQuestion, setOptionsQuestions]
-      = useState<string[]>([]);
+  const [questions, setQuestions] = useState<QuestionTemplate[]>([]);
+  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
+  const {
+    loading: answerLoading,
+    startLoading: startAnswerLoading,
+    stopLoading: stopAnswerLoading,
+  } = useLoading();
+  const {
+    loading: questionLoading,
+    startLoading: startQuestionLoading,
+    stopLoading: stopQuestionLoading,
+  } = useLoading();
+  const [activeAnswerIndex, setActiveAnswerIndex] = useState(0);
+  const [optionsQuestion, setOptionsQuestions] = useState<string[]>([]);
   const [isTouchDevice, setIsTouchDevice] = useState<boolean>(false);
 
   const getQuestionHandler = useCallback((questionsList = questions) => {
@@ -27,8 +30,8 @@ export function useChat() {
         {
           id: questionsMock[questionsList.length].id,
           text: questionsMock[questionsList.length].text,
-          answer: []
-        }
+          answer: [],
+        },
       ];
 
       setQuestions(newQuestions);
@@ -37,107 +40,107 @@ export function useChat() {
     }, 500);
   }, []);
 
-  const createOrUpdateAnswers = useCallback((
-    params: AnswerRequest,
-    index: number
-  ) => {
+  const createOrUpdateAnswers = useCallback(
+    (params: AnswerRequest, index: number) => {
+      const newAnswers = {
+        options: params.options,
+        answer: [params.freeAnswer],
+        audio: params.audio,
+        warning: false,
+      };
 
-    const newAnswers = {
-      options: params.options,
-      answer: [params.freeAnswer],
-      audio: params.audio,
-      warning: false
-    };
-
-    return questions.map(item => {
-      if (item.id === params.questionId) {
-        const answers = [...item.answer];
-        answers[index] = newAnswers;
-
-        return {
-          ...item,
-          answer: answers,
-        };
-      }
-
-      return item;
-    });
-  }, [questions]);
-
-  const sendAnswerAndGetQuestion = useCallback(async (
-    params: AnswerRequest,
-    questionsList: QuestionTemplate[],
-    answerIndex: number
-  ) => {
-    try {
-      await sendAnswer();
-
-      stopAnswerLoading();
-      resetQuestions();
-
-      if (!questionsMock[questionsList.length]) return;
-
-      startQuestionLoading();
-
-      void getQuestionHandler(questionsList);
-    } catch {
-      stopAnswerLoading();
-
-      const warningQuestions = questionsList.map(item => {
+      return questions.map((item) => {
         if (item.id === params.questionId) {
+          const answers = [...item.answer];
+          answers[index] = newAnswers;
+
           return {
             ...item,
-            answer: item.answer.map((itemAnswer, index) => {
-              if (answerIndex === index) {
-                return {
-                  ...itemAnswer,
-                  warning: true
-                };
-              }
-              return itemAnswer;
-            })
+            answer: answers,
           };
         }
 
         return item;
       });
+    },
+    [questions],
+  );
 
-      setQuestions(warningQuestions);
-    }
-  }, [getQuestionHandler, startQuestionLoading, stopAnswerLoading]);
+  const sendAnswerAndGetQuestion = useCallback(
+    async (params: AnswerRequest, questionsList: QuestionTemplate[], answerIndex: number) => {
+      try {
+        await sendAnswer();
 
-  const reloadAnswer = useCallback((index: number) => {
-    if (answerLoading || questionLoading) {
-      return;
-    }
+        stopAnswerLoading();
+        resetQuestions();
 
-    startAnswerLoading();
+        if (!questionsMock[questionsList.length]) return;
 
-    const updateAnswer = questions
-      .find(item => item.id === activeQuestionId)?.answer[index];
+        startQuestionLoading();
 
-    if (!updateAnswer || !activeQuestionId) return;
+        void getQuestionHandler(questionsList);
+      } catch {
+        stopAnswerLoading();
 
-    const params = {
-      questionId: activeQuestionId,
-      freeAnswer: updateAnswer.answer[0],
-      options: updateAnswer.options,
-      audio: updateAnswer.audio,
-    };
+        const warningQuestions = questionsList.map((item) => {
+          if (item.id === params.questionId) {
+            return {
+              ...item,
+              answer: item.answer.map((itemAnswer, index) => {
+                if (answerIndex === index) {
+                  return {
+                    ...itemAnswer,
+                    warning: true,
+                  };
+                }
+                return itemAnswer;
+              }),
+            };
+          }
 
-    const newQuestions = createOrUpdateAnswers(params, index);
-    setQuestions(newQuestions);
+          return item;
+        });
 
-    void sendAnswerAndGetQuestion(params, newQuestions, index);
-  },[
-    answerLoading,
-    questionLoading,
-    questions,
-    activeQuestionId,
-    startAnswerLoading,
-    createOrUpdateAnswers,
-    sendAnswerAndGetQuestion
-  ]);
+        setQuestions(warningQuestions);
+      }
+    },
+    [getQuestionHandler, startQuestionLoading, stopAnswerLoading],
+  );
+
+  const reloadAnswer = useCallback(
+    (index: number) => {
+      if (answerLoading || questionLoading) {
+        return;
+      }
+
+      startAnswerLoading();
+
+      const updateAnswer = questions.find((item) => item.id === activeQuestionId)?.answer[index];
+
+      if (!updateAnswer || !activeQuestionId) return;
+
+      const params = {
+        questionId: activeQuestionId,
+        freeAnswer: updateAnswer.answer[0],
+        options: updateAnswer.options,
+        audio: updateAnswer.audio,
+      };
+
+      const newQuestions = createOrUpdateAnswers(params, index);
+      setQuestions(newQuestions);
+
+      void sendAnswerAndGetQuestion(params, newQuestions, index);
+    },
+    [
+      answerLoading,
+      questionLoading,
+      questions,
+      activeQuestionId,
+      startAnswerLoading,
+      createOrUpdateAnswers,
+      sendAnswerAndGetQuestion,
+    ],
+  );
 
   const sendAnswer = async () => {
     return new Promise((resolve, reject) => {
@@ -155,33 +158,36 @@ export function useChat() {
     void getQuestionHandler();
   }, [getQuestionHandler]);
 
-  const sendAnswerHandler = useCallback(async (params: {
-        freeAnswer: string,
-        options: string[],
-        audio: HTMLAudioElement | null
-    }) => {
-    if (answerLoading || questionLoading || !activeQuestionId) return;
+  const sendAnswerHandler = useCallback(
+    async (params: { freeAnswer: string; options: string[]; audio: HTMLAudioElement | null }) => {
+      if (answerLoading || questionLoading || !activeQuestionId) return;
 
-    const answerIndex = activeAnswerIndex;
-    setActiveAnswerIndex(index => index + 1);
-    startAnswerLoading();
+      const answerIndex = activeAnswerIndex;
+      setActiveAnswerIndex((index) => index + 1);
+      startAnswerLoading();
 
-    const newQuestions = createOrUpdateAnswers(
-      {...params, questionId: activeQuestionId},
-      answerIndex
-    );
-    setQuestions(newQuestions);
+      const newQuestions = createOrUpdateAnswers(
+        { ...params, questionId: activeQuestionId },
+        answerIndex,
+      );
+      setQuestions(newQuestions);
 
-    void sendAnswerAndGetQuestion({...params, questionId: activeQuestionId}, newQuestions, answerIndex);
-  }, [
-    answerLoading,
-    questionLoading,
-    activeQuestionId,
-    activeAnswerIndex,
-    startAnswerLoading,
-    createOrUpdateAnswers,
-    sendAnswerAndGetQuestion
-  ]);
+      void sendAnswerAndGetQuestion(
+        { ...params, questionId: activeQuestionId },
+        newQuestions,
+        answerIndex,
+      );
+    },
+    [
+      answerLoading,
+      questionLoading,
+      activeQuestionId,
+      activeAnswerIndex,
+      startAnswerLoading,
+      createOrUpdateAnswers,
+      sendAnswerAndGetQuestion,
+    ],
+  );
 
   const resetQuestions = () => {
     setOptionsQuestions([]);

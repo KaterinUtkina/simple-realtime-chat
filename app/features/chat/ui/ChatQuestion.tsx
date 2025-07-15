@@ -1,4 +1,4 @@
-import {memo} from "react";
+import { memo } from "react";
 import UserIcon from "@/app/shared/ui/icon/UserIcon.svg";
 
 type Props = {
@@ -12,7 +12,7 @@ const ChatQuestion = memo(function ChatQuestion({ text }: Props) {
       </div>
       <div className="max-w-lg pt-2 pb-2">{text}</div>
     </div>
-  )
+  );
 });
 
 export default ChatQuestion;
