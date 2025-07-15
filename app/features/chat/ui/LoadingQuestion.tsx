@@ -1,5 +1,5 @@
 import {memo} from "react";
-import {UserIcon} from "@/app/shared/ui/icon/UserIcon";
+import UserIcon from "@/app/shared/ui/icon/UserIcon.svg";
 import {Dot} from "@/app/features/chat/styles";
 
 const LoadingQuestion = memo(function LoadingQuestion() {

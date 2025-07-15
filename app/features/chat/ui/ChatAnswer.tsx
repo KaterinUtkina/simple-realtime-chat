@@ -1,7 +1,7 @@
 "use client"
-import {WarningIcon} from "@/app/shared/ui/icon/WarningIcon";
-import {ClockIcon} from "@/app/shared/ui/icon/ClockIcon";
-import {RotateIcon} from "@/app/shared/ui/icon/RotateIcon";
+import WarningIcon from "@/app/shared/ui/icon/WarningIcon.svg";
+import ClockIcon from "@/app/shared/ui/icon/ClockIcon.svg";
+import RotateIcon from "@/app/shared/ui/icon/RotateIcon.svg";
 import {memo} from "react";
 import {Answer} from "@/app/features/chat/types";
 

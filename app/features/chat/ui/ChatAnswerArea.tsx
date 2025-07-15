@@ -1,9 +1,9 @@
 "use client"
 import {memo} from "react";
 import {useChatAnswer} from "@/app/features/chat/hooks/useChatAnswer";
-import {MicrophoneIcon} from "@/app/shared/ui/icon/MicrophoneIcon";
-import {StopIcon} from "@/app/shared/ui/icon/StopIcon";
-import {SendIcon} from "@/app/shared/ui/icon/SendIcon";
+import MicrophoneIcon from "@/app/shared/ui/icon/MicrophoneIcon.svg";
+import StopIcon from "@/app/shared/ui/icon/StopIcon.svg";
+import SendIcon from "@/app/shared/ui/icon/SendIcon.svg";
 
 type ChatAnswerAreaProps = {
   options: string[],
