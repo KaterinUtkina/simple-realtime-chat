@@ -3,14 +3,10 @@ import { useChatAnswer } from "@/app/features/chat/hooks/useChatAnswer";
 import MicrophoneIcon from "@/app/shared/ui/icon/MicrophoneIcon.svg";
 import StopIcon from "@/app/shared/ui/icon/StopIcon.svg";
 import SendIcon from "@/app/shared/ui/icon/SendIcon.svg";
+import { MessageContent } from "@/app/features/chat/types";
 
 type ChatAnswerAreaProps = {
-  options: string[];
-  sendAnswerHandler: (params: {
-    freeAnswer: string;
-    options: string[];
-    audio: HTMLAudioElement | null;
-  }) => void;
+  sendAnswerHandler: (content: MessageContent) => void;
   isTouchDevice: boolean;
 };
 const ChatAnswerArea = memo(function ChatAnswerArea(
@@ -24,34 +20,12 @@ const ChatAnswerArea = memo(function ChatAnswerArea(
     settingsTextarea,
     textareaRef,
     answer,
-    toggleChecked,
-    options,
-    optionsRef,
     recordHandler,
     isRecord,
   } = useChatAnswer(props);
 
   return (
     <div onKeyDown={handleKeyDown} className={"pb-4"}>
-      <ul
-        className={"flex gap-4 justify-between mb-4 flex-wrap"}
-        ref={optionsRef}
-      >
-        {options &&
-          Object.keys(options).map((optionKey, index) => (
-            <li
-              onClick={() => toggleChecked(optionKey)}
-              key={index}
-              className={`py-2 px-6 bg-violet-200 rounded-lg cursor-pointer box-border grow text-center hover:outline-2 hover:outline-violet-400 ${
-                options && options[optionKey]
-                  ? "outline-2 outline-violet-400"
-                  : ""
-              }`}
-            >
-              {optionKey}
-            </li>
-          ))}
-      </ul>
       <div className={"flex gap-2 relative"}>
         <label className={"grow shadow-md rounded-md p-3 bg-white flex"}>
           <textarea

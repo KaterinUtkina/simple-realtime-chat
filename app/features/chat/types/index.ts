@@ -1,19 +1,17 @@
-export type QuestionTemplate = {
-  id: string,
-  text: string,
-  answer: Answer[],
-}
+import { ChatMessageTypes } from "@/app/features/chat/enum";
 
-export type Answer = {
-  options: string[],
-  answer: string[],
-  audio: HTMLAudioElement | null,
-  warning: boolean
-}
+export type ChatMessage = {
+  content: string;
+  author: string;
+  timestamp: number;
+  type: ChatMessageTypes;
+};
 
-export type AnswerRequest = {
-  questionId: string,
-  freeAnswer: string,
-  options: string[],
-  audio: HTMLAudioElement | null
-}
+export type MessageContent = string | HTMLAudioElement;
+
+export type WebsocketMessageResponse = {
+  content: string;
+  type: string;
+  author?: string;
+  timestamp: number;
+};

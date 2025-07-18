@@ -1,3 +1,9 @@
-export const enum ChatEvents {
-  OPTIONS_RENDERED = "options-rendered",
+export const enum ChatMessageTypes {
+  USER = "user",
+  USER_AUDIO = "user_audio",
+  SYSTEM = "system",
+}
+
+export const enum KeyboardKey {
+  ENTER = "Enter",
 }

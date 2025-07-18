@@ -1,10 +1,8 @@
-import { ReactNode, useCallback, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import {
   OverlayScrollbarsComponent,
   OverlayScrollbarsComponentRef,
 } from "overlayscrollbars-react";
-import { eventBus } from "@/app/shared/services/EventBus";
-import { ChatEvents } from "@/app/features/chat/enum";
 
 type CustomScrollProps = {
   children: ReactNode;
@@ -29,27 +27,11 @@ const ChatMessageScroll = (props: CustomScrollProps) => {
     });
   };
 
-  const initEvents = useCallback(() => {
-    eventBus.on(ChatEvents.OPTIONS_RENDERED, scrollContent);
-  }, []);
-
-  const destroyEvents = useCallback(() => {
-    eventBus.off(ChatEvents.OPTIONS_RENDERED, scrollContent);
-  }, []);
-
   useEffect(() => {
     if (contentRef.current) {
       scrollContent();
     }
   }, [props.children]);
-
-  useEffect(() => {
-    initEvents();
-
-    return () => {
-      destroyEvents();
-    };
-  }, [destroyEvents, initEvents]);
 
   return (
     <OverlayScrollbarsComponent ref={ref} style={{ height: "100%" }} defer>

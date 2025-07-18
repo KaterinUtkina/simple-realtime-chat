@@ -1,227 +1,136 @@
 import { useCallback, useEffect, useState } from "react";
-import { useLoading } from "@/app/features/chat/hooks/useLoading";
-import questionsMock from "@/app/config/questions.json";
-import { AnswerRequest, QuestionTemplate } from "@/app/features/chat/types";
+import {
+  ChatMessage,
+  MessageContent,
+  WebsocketMessageResponse,
+} from "@/app/features/chat/types";
+import { websocketService } from "@/app/shared/services/WebsoketService";
+import { ChatMessageTypes } from "@/app/features/chat/enum";
 
 export function useChat() {
-  const [questions, setQuestions] = useState<QuestionTemplate[]>([]);
-  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
-  const {
-    loading: answerLoading,
-    startLoading: startAnswerLoading,
-    stopLoading: stopAnswerLoading,
-  } = useLoading();
-  const {
-    loading: questionLoading,
-    startLoading: startQuestionLoading,
-    stopLoading: stopQuestionLoading,
-  } = useLoading();
-  const [activeAnswerIndex, setActiveAnswerIndex] = useState(0);
-  const [optionsQuestion, setOptionsQuestions] = useState<string[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTouchDevice, setIsTouchDevice] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string>("");
+  const WEBSOCKET_URL = "ws://localhost:10000";
+  const [usersCount, setUsersCount] = useState(0);
 
-  const getQuestionHandler = useCallback((questionsList = questions) => {
-    setTimeout(() => {
-      setActiveAnswerIndex(0);
-      stopQuestionLoading();
-
-      const newQuestions = [
-        ...questionsList,
-        {
-          id: questionsMock[questionsList.length].id,
-          text: questionsMock[questionsList.length].text,
-          answer: [],
-        },
-      ];
-
-      setQuestions(newQuestions);
-      setOptionsQuestions(
-        questionsMock[questionsList.length].options as string[],
-      );
-      setActiveQuestionId(questionsMock[questionsList.length].id);
-    }, 500);
+  const checkTouchDevice = useCallback(() => {
+    setIsTouchDevice(navigator.maxTouchPoints > 0);
   }, []);
 
-  const createOrUpdateAnswers = useCallback(
-    (params: AnswerRequest, index: number) => {
-      const newAnswers = {
-        options: params.options,
-        answer: [params.freeAnswer],
-        audio: params.audio,
-        warning: false,
-      };
-
-      return questions.map((item) => {
-        if (item.id === params.questionId) {
-          const answers = [...item.answer];
-          answers[index] = newAnswers;
-
-          return {
-            ...item,
-            answer: answers,
-          };
-        }
-
-        return item;
-      });
-    },
-    [questions],
-  );
-
-  const sendAnswerAndGetQuestion = useCallback(
-    async (
-      params: AnswerRequest,
-      questionsList: QuestionTemplate[],
-      answerIndex: number,
-    ) => {
-      try {
-        await sendAnswer();
-
-        stopAnswerLoading();
-        resetQuestions();
-
-        if (!questionsMock[questionsList.length]) return;
-
-        startQuestionLoading();
-
-        void getQuestionHandler(questionsList);
-      } catch {
-        stopAnswerLoading();
-
-        const warningQuestions = questionsList.map((item) => {
-          if (item.id === params.questionId) {
-            return {
-              ...item,
-              answer: item.answer.map((itemAnswer, index) => {
-                if (answerIndex === index) {
-                  return {
-                    ...itemAnswer,
-                    warning: true,
-                  };
-                }
-                return itemAnswer;
-              }),
-            };
-          }
-
-          return item;
-        });
-
-        setQuestions(warningQuestions);
-      }
-    },
-    [getQuestionHandler, startQuestionLoading, stopAnswerLoading],
-  );
-
-  const reloadAnswer = useCallback(
-    (index: number) => {
-      if (answerLoading || questionLoading) {
-        return;
-      }
-
-      startAnswerLoading();
-
-      const updateAnswer = questions.find(
-        (item) => item.id === activeQuestionId,
-      )?.answer[index];
-
-      if (!updateAnswer || !activeQuestionId) return;
-
-      const params = {
-        questionId: activeQuestionId,
-        freeAnswer: updateAnswer.answer[0],
-        options: updateAnswer.options,
-        audio: updateAnswer.audio,
-      };
-
-      const newQuestions = createOrUpdateAnswers(params, index);
-      setQuestions(newQuestions);
-
-      void sendAnswerAndGetQuestion(params, newQuestions, index);
-    },
-    [
-      answerLoading,
-      questionLoading,
-      questions,
-      activeQuestionId,
-      startAnswerLoading,
-      createOrUpdateAnswers,
-      sendAnswerAndGetQuestion,
-    ],
-  );
-
-  const sendAnswer = async () => {
+  const getAudioDataUrl = (audio: HTMLAudioElement): Promise<string> => {
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (Math.random() < 0.7) {
-          resolve(true);
-        } else {
-          reject();
-        }
-      }, 500);
+      fetch(audio.src)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        })
+        .catch(reject);
     });
   };
 
-  useEffect(() => {
-    void getQuestionHandler();
-  }, [getQuestionHandler]);
+  const handleMessage = (messageData: unknown) => {
+    const parsedMessage = JSON.parse(
+      messageData as string,
+    ) as WebsocketMessageResponse;
+    switch (parsedMessage.type) {
+      case "client_id": {
+        setUserId(parsedMessage.content);
+        break;
+      }
+      case "clients_count": {
+        setUsersCount(+parsedMessage.content);
+        break;
+      }
+      case "user_connect": {
+        const currentMessage = {
+          author: "",
+          content: "Пользователь подключился",
+          timestamp: parsedMessage.timestamp,
+          type: ChatMessageTypes.SYSTEM,
+        };
 
-  const sendAnswerHandler = useCallback(
-    async (params: {
-      freeAnswer: string;
-      options: string[];
-      audio: HTMLAudioElement | null;
-    }) => {
-      if (answerLoading || questionLoading || !activeQuestionId) return;
+        setMessages((prev) => [...prev, currentMessage]);
+        break;
+      }
+      case "user_disconnect": {
+        const currentMessage = {
+          author: "",
+          content: "Пользователь отключился",
+          timestamp: parsedMessage.timestamp,
+          type: ChatMessageTypes.SYSTEM,
+        };
 
-      const answerIndex = activeAnswerIndex;
-      setActiveAnswerIndex((index) => index + 1);
-      startAnswerLoading();
+        setMessages((prev) => [...prev, currentMessage]);
+        break;
+      }
+      case "user_audio": {
+        const currentMessage = {
+          author: parsedMessage.author ?? "",
+          content: parsedMessage.content,
+          timestamp: parsedMessage.timestamp ?? 0,
+          type: ChatMessageTypes.USER_AUDIO,
+        };
 
-      const newQuestions = createOrUpdateAnswers(
-        { ...params, questionId: activeQuestionId },
-        answerIndex,
-      );
-      setQuestions(newQuestions);
+        setMessages((prev) => [...prev, currentMessage]);
 
-      void sendAnswerAndGetQuestion(
-        { ...params, questionId: activeQuestionId },
-        newQuestions,
-        answerIndex,
-      );
-    },
-    [
-      answerLoading,
-      questionLoading,
-      activeQuestionId,
-      activeAnswerIndex,
-      startAnswerLoading,
-      createOrUpdateAnswers,
-      sendAnswerAndGetQuestion,
-    ],
-  );
+        break;
+      }
+      default: {
+        const currentMessage = {
+          author: parsedMessage.author ?? "",
+          content: parsedMessage.content,
+          timestamp: parsedMessage.timestamp ?? 0,
+          type: ChatMessageTypes.USER,
+        };
 
-  const resetQuestions = () => {
-    setOptionsQuestions([]);
+        setMessages((prev) => [...prev, currentMessage]);
+      }
+    }
   };
+
+  const initChatService = useCallback(() => {
+    websocketService.openConnection("user_chat", WEBSOCKET_URL, handleMessage);
+  }, []);
 
   useEffect(() => {
     checkTouchDevice();
-  }, []);
+    initChatService();
+  }, [checkTouchDevice, initChatService]);
 
-  const checkTouchDevice = () => {
-    setIsTouchDevice(navigator.maxTouchPoints > 0);
+  const sendAnswerHandler = async (content: MessageContent) => {
+    if (!userId) return;
+
+    let params = {};
+    if (typeof content === "string") {
+      params = {
+        author: userId,
+        content,
+        type: ChatMessageTypes.USER,
+      };
+    } else if (content instanceof HTMLAudioElement) {
+      try {
+        const audioUrl = await getAudioDataUrl(content);
+        params = {
+          author: userId,
+          content: audioUrl,
+          type: ChatMessageTypes.USER_AUDIO,
+        };
+      } catch (err) {
+        console.log("Ошибка получения url записи", err);
+      }
+    }
+    websocketService.sendMessage("user_chat", params);
   };
 
   return {
-    questions,
-    questionLoading,
-    answerLoading,
-    activeQuestionId,
-    reloadAnswer,
-    activeAnswerIndex,
     sendAnswerHandler,
-    optionsQuestion,
     isTouchDevice,
+    messages,
+    userId,
+    usersCount,
   };
 }
