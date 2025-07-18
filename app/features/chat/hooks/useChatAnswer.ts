@@ -84,14 +84,10 @@ export function useChatAnswer(props: ChatAnswerAreaProps) {
     setAudio(null);
   };
 
-  const settingsTextarea = props.isTouchDevice
-    ? {
-        autoFocus: false,
-      }
-    : {
-        autoFocus: true,
-        onBlur: handleBlur,
-      };
+  const settingsTextarea = {
+    autoFocus: !props.isTouchDevice,
+    onBlur: handleBlur,
+  };
 
   const recordHandler = () => {
     return isRecord ? stopRecord() : startRecord();

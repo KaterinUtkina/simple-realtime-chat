@@ -41,7 +41,9 @@ const UserMessage = memo(function UserMessage({ message, userId }: Props) {
       {message.author === userId ? (
         <div className="flex justify-end relative mb-5 gap-3">
           <div
-            className={"p-3 rounded-2xl bg-white w-full md:max-w-lg shadow-md"}
+            className={
+              "p-3 rounded-2xl bg-white max-w-full md:max-w-lg w-fit shadow-md"
+            }
           >
             {message.type === ChatMessageTypes.USER ? (
               <p className="break-words">{message.content as string}</p>
@@ -51,13 +53,15 @@ const UserMessage = memo(function UserMessage({ message, userId }: Props) {
           </div>
         </div>
       ) : (
-        <div className="flex gap-4 mb-5 items-start">
+        <div className="flex gap-2 md:gap-4 mb-5 items-start">
           <div
-            className={`flex items-center justify-center shrink-0 ${bgColor} w-10 h-10 rounded-full overflow-hidden`}
+            className={`flex items-center justify-center shrink-0 ${bgColor} w-6 h-6 md:w-10 md:h-10 rounded-full overflow-hidden`}
           >
             <UserIcon className="w-full h-full pt-1 fill-white" />
           </div>
-          <div className="p-3 rounded-2xl bg-white w-[calc(100%-56px)] md:max-w-lg shadow-md">
+          <div
+            className={`${message.type === ChatMessageTypes.USER ? "p-3" : "px-1 py-3"} rounded-2xl bg-white max-w-[calc(100%-32px)] md:max-w-lg w-fit shadow-md`}
+          >
             {message.type === ChatMessageTypes.USER ? (
               <p className="break-words">{message.content as string}</p>
             ) : (
