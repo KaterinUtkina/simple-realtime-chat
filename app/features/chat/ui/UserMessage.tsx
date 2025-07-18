@@ -40,7 +40,9 @@ const UserMessage = memo(function UserMessage({ message, userId }: Props) {
     <>
       {message.author === userId ? (
         <div className="flex justify-end relative mb-5 gap-3">
-          <div className={"p-3 rounded-2xl bg-white max-w-lg shadow-md"}>
+          <div
+            className={"p-3 rounded-2xl bg-white w-full md:max-w-lg shadow-md"}
+          >
             {message.type === ChatMessageTypes.USER ? (
               <p className="break-words">{message.content as string}</p>
             ) : (
@@ -55,9 +57,9 @@ const UserMessage = memo(function UserMessage({ message, userId }: Props) {
           >
             <UserIcon className="w-full h-full pt-1 fill-white" />
           </div>
-          <div className="p-3 rounded-2xl bg-white max-w-lg shadow-md">
+          <div className="p-3 rounded-2xl bg-white w-[calc(100%-56px)] md:max-w-lg shadow-md">
             {message.type === ChatMessageTypes.USER ? (
-              <>{message.content as string}</>
+              <p className="break-words">{message.content as string}</p>
             ) : (
               <audio src={message.content} controls />
             )}
