@@ -11,7 +11,7 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTouchDevice, setIsTouchDevice] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("");
-  const WEBSOCKET_URL = "wss://chat-ws-ai-server.onrender.com";
+  const WEBSOCKET_URL = "ws://localhost:10000";
   const [usersCount, setUsersCount] = useState(0);
 
   const checkTouchDevice = useCallback(() => {
