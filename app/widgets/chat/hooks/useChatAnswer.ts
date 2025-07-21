@@ -7,35 +7,64 @@ import {
   useState,
 } from "react";
 import { AudioRecorderPlugin } from "audio-recorder-plugin";
-import { MessageContent } from "@/app/features/chat/types";
-import { KeyboardKey } from "@/app/features/chat/enum";
+import { MessageContent } from "@/app/entities/chat/types";
+import { ChatMessageTypes, KeyboardKey } from "@/app/widgets/chat/enum";
+import { websocketService } from "@/app/shared/services/WebsoketService";
+import { useSelector } from "react-redux";
+import { isTouchDevice, userId } from "@/app/entities/chat/model/selectors";
+import { getAudioDataUrl } from "@/app/shared/helpers/common";
 
-type ChatAnswerAreaProps = {
-  sendAnswerHandler: (content: MessageContent) => void;
-  isTouchDevice: boolean;
-};
-
-export function useChatAnswer(props: ChatAnswerAreaProps) {
+export function useChatAnswer() {
   const [answer, setAnswer] = useState<string>("");
   const [rows, setRows] = useState(1);
+  const [isRecord, setIsRecord] = useState(false);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const MAX_ROWS = 6;
-  const [isRecord, setIsRecord] = useState(false);
   const recorder = useRef(new AudioRecorderPlugin());
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const currentUser = useSelector(userId);
+  const isTouch = useSelector(isTouchDevice);
 
-  const submitHandler = useCallback(() => {
+  const sendAnswerHandler = useCallback(
+    async (content: MessageContent) => {
+      if (!currentUser) return;
+
+      let params = {};
+      if (typeof content === "string") {
+        params = {
+          author: currentUser,
+          content,
+          type: ChatMessageTypes.USER,
+        };
+      } else if (content instanceof HTMLAudioElement) {
+        try {
+          const audioUrl = await getAudioDataUrl(content);
+          params = {
+            author: currentUser,
+            content: audioUrl,
+            type: ChatMessageTypes.USER_AUDIO,
+          };
+        } catch (err) {
+          console.log("Ошибка получения url записи", err);
+        }
+      }
+      websocketService.sendMessage("user_chat", params);
+    },
+    [currentUser],
+  );
+
+  const submitHandler = useCallback(async () => {
     if (!(answer.length || audio)) return;
 
     const message = audio ? audio : answer;
 
-    props.sendAnswerHandler(message);
+    await sendAnswerHandler(message);
     resetData();
-  }, [answer, audio, props]);
+  }, [answer, audio, sendAnswerHandler]);
 
   useEffect(() => {
     if (audio) {
-      submitHandler();
+      void submitHandler();
     }
   }, [audio, submitHandler]);
 
@@ -74,7 +103,7 @@ export function useChatAnswer(props: ChatAnswerAreaProps) {
     if (event.key === KeyboardKey.ENTER) {
       event.preventDefault();
 
-      submitHandler();
+      void submitHandler();
     }
   };
 
@@ -85,7 +114,7 @@ export function useChatAnswer(props: ChatAnswerAreaProps) {
   };
 
   const settingsTextarea = {
-    autoFocus: !props.isTouchDevice,
+    autoFocus: !isTouch,
     onBlur: handleBlur,
   };
 

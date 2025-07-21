@@ -1,17 +1,10 @@
 import { memo } from "react";
-import { useChatAnswer } from "@/app/features/chat/hooks/useChatAnswer";
+import { useChatAnswer } from "@/app/widgets/chat/hooks/useChatAnswer";
 import MicrophoneIcon from "@/app/shared/ui/icon/MicrophoneIcon.svg";
 import StopIcon from "@/app/shared/ui/icon/StopIcon.svg";
 import SendIcon from "@/app/shared/ui/icon/SendIcon.svg";
-import { MessageContent } from "@/app/features/chat/types";
 
-type ChatAnswerAreaProps = {
-  sendAnswerHandler: (content: MessageContent) => void;
-  isTouchDevice: boolean;
-};
-const ChatAnswerArea = memo(function ChatAnswerArea(
-  props: ChatAnswerAreaProps,
-) {
+const ChatAnswerArea = memo(function ChatAnswerArea() {
   const {
     rows,
     handleChange,
@@ -22,7 +15,7 @@ const ChatAnswerArea = memo(function ChatAnswerArea(
     answer,
     recordHandler,
     isRecord,
-  } = useChatAnswer(props);
+  } = useChatAnswer();
 
   return (
     <div onKeyDown={handleKeyDown} className={"pb-4"}>

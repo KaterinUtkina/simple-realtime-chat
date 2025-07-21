@@ -1,8 +1,13 @@
-export const generateUniqueUserId = () => {
-  const unixDatePart = Math.floor(Date.now() / 1000);
-  const randomPart = String(
-    Math.floor(Math.random() * 1_000_000_0000),
-  ).padStart(10, "0");
-
-  return `${unixDatePart}${randomPart}`;
+export const getAudioDataUrl = (audio: HTMLAudioElement): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    fetch(audio.src)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      })
+      .catch(reject);
+  });
 };

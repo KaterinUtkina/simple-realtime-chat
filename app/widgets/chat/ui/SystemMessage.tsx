@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { ChatMessage as ChatMessageT } from "@/app/features/chat/types";
+import { ChatMessage as ChatMessageT } from "@/app/entities/chat/types";
 
 type Props = {
   message: ChatMessageT;

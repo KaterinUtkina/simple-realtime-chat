@@ -1,11 +1,12 @@
 import { memo, useMemo } from "react";
-import { ChatMessage as ChatMessageT } from "@/app/features/chat/types";
+import { ChatMessage as ChatMessageT } from "@/app/entities/chat/types";
 import UserIcon from "@/app/shared/ui/icon/UserIcon.svg";
-import { ChatMessageTypes } from "@/app/features/chat/enum";
+import { ChatMessageTypes } from "@/app/widgets/chat/enum";
+import { useSelector } from "react-redux";
+import { userId } from "@/app/entities/chat/model/selectors";
 
 type Props = {
   message: ChatMessageT;
-  userId: string;
 };
 
 const colors = [
@@ -30,7 +31,9 @@ const getColorByUserId = (userId: string) => {
   return colors[index];
 };
 
-const UserMessage = memo(function UserMessage({ message, userId }: Props) {
+const UserMessage = memo(function UserMessage({ message }: Props) {
+  const currentUser = useSelector(userId);
+
   const bgColor = useMemo(
     () => getColorByUserId(message.author),
     [message.author],
@@ -38,7 +41,7 @@ const UserMessage = memo(function UserMessage({ message, userId }: Props) {
 
   return (
     <>
-      {message.author === userId ? (
+      {message.author === currentUser ? (
         <div className="flex justify-end relative mb-5 gap-3">
           <div
             className={

@@ -1,4 +1,4 @@
-import { ChatMessageTypes } from "@/app/features/chat/enum";
+import { ChatMessageTypes } from "@/app/widgets/chat/enum";
 
 export type ChatMessage = {
   content: string;

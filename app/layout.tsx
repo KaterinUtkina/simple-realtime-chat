@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
+import ClientProvider from "@/app/ClientProvider";
 
 export const metadata: Metadata = {
   title: "Chat",
@@ -14,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={"antialiased m-0 p-0 min-w-[375px] h-full"}>
-        {children}
+        <ClientProvider>{children}</ClientProvider>
       </body>
     </html>
   );
