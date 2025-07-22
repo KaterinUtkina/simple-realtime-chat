@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import "overlayscrollbars/styles/overlayscrollbars.css";
 import ChatHeader from "@/app/widgets/chat/ui/ChatHeader";
+import { useChat } from "@/app/widgets/chat/hooks/useChat";
 
 const ChatAnswerArea = dynamic(
   () => import("@/app/widgets/chat/ui/ChatAnswerArea"),
@@ -13,6 +14,8 @@ const ChatAnswerArea = dynamic(
 );
 
 const Chat = () => {
+  useChat();
+
   return (
     <div className={"h-full overflow-hidden"}>
       <div className={"h-full relative"}>

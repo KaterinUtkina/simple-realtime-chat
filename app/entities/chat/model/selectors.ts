@@ -1,17 +1,7 @@
-import { ChatMessage } from "@/app/entities/chat/types";
+import { ChatSliceState } from "@/app/entities/chat/types";
 
-export interface ChatState {
-  messages: ChatMessage[];
-  userId: string;
-  isTouchDevice: boolean;
-  userCount: number;
-}
-interface SliceChatRootState {
-  chat: ChatState;
-}
-export const selectMessages = (state: SliceChatRootState) =>
-  state.chat.messages;
-export const userId = (state: SliceChatRootState) => state.chat.userId;
-export const isTouchDevice = (state: SliceChatRootState) =>
+export const selectMessages = (state: ChatSliceState) => state.chat.messages;
+export const userId = (state: ChatSliceState) => state.chat.userId;
+export const isTouchDevice = (state: ChatSliceState) =>
   state.chat.isTouchDevice;
-export const userCount = (state: SliceChatRootState) => state.chat.userCount;
+export const usersCount = (state: ChatSliceState) => state.chat.usersCount;

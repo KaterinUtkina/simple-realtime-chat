@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { WebsocketMessageResponse } from "@/app/entities/chat/types";
 import { websocketService } from "@/app/shared/services/WebsoketService";
 import { ChatMessageTypes } from "@/app/widgets/chat/enum";
@@ -7,11 +7,11 @@ import {
   addMessage,
   addUserId,
   setIsTouchDevice,
+  updateUsersCount,
 } from "@/app/entities/chat/model/slice";
 
 export function useChat() {
   const WEBSOCKET_URL = "wss://chat-ws-ai-server.onrender.com";
-  const [usersCount, setUsersCount] = useState(0);
   const dispatch = useDispatch();
 
   const checkTouchDevice = useCallback(() => {
@@ -29,7 +29,7 @@ export function useChat() {
           break;
         }
         case "clients_count": {
-          setUsersCount(+parsedMessage.content);
+          dispatch(updateUsersCount(+parsedMessage.content));
           break;
         }
         case "user_connect": {
@@ -87,8 +87,4 @@ export function useChat() {
     checkTouchDevice();
     initChatService();
   }, [checkTouchDevice, initChatService]);
-
-  return {
-    usersCount,
-  };
 }

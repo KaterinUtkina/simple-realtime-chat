@@ -15,3 +15,14 @@ export type WebsocketMessageResponse = {
   author?: string;
   timestamp: number;
 };
+
+export interface ChatState {
+  messages: ChatMessage[];
+  userId: string;
+  isTouchDevice: boolean;
+  usersCount: number;
+}
+
+export interface ChatSliceState {
+  chat: ChatState;
+}

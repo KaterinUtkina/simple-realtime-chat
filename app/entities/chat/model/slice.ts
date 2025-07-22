@@ -1,12 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ChatMessage } from "@/app/entities/chat/types";
-import { ChatState } from "@/app/entities/chat/model/selectors";
+import { ChatMessage, ChatState } from "@/app/entities/chat/types";
 
 const initialState: ChatState = {
   messages: [],
   userId: "",
   isTouchDevice: false,
-  userCount: 0,
+  usersCount: 0,
 };
 
 const chatSlice = createSlice({
@@ -22,12 +21,12 @@ const chatSlice = createSlice({
     setIsTouchDevice(state, action: PayloadAction<boolean>) {
       state.isTouchDevice = action.payload;
     },
-    updateUserCount(state, action: PayloadAction<number>) {
-      state.userCount = action.payload;
+    updateUsersCount(state, action: PayloadAction<number>) {
+      state.usersCount = action.payload;
     },
   },
 });
 
-export const { addMessage, addUserId, setIsTouchDevice, updateUserCount } =
+export const { addMessage, addUserId, setIsTouchDevice, updateUsersCount } =
   chatSlice.actions;
 export default chatSlice.reducer;

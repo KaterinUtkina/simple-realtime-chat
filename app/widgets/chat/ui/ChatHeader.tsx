@@ -1,10 +1,10 @@
 import { memo } from "react";
 import UsersIcon from "@/app/shared/ui/icon/UsersIcon.svg";
-import { useChat } from "@/app/widgets/chat/hooks/useChat";
+import { useSelector } from "react-redux";
+import { usersCount } from "@/app/entities/chat/model/selectors";
 
 const ChatHeader = memo(function ChatHeader() {
-  const { usersCount } = useChat();
-
+  const count = useSelector(usersCount);
   return (
     <header className="bg-white shadow absolute w-full z-10">
       <div className="px-4 py-6 sm:px-4 lg:px-6 flex justify-between">
@@ -13,7 +13,7 @@ const ChatHeader = memo(function ChatHeader() {
           <span className={"w-6 h-6 flex items-center justify-center"}>
             <UsersIcon className="w-full h-full fill-violet-400" />
           </span>
-          {usersCount === 0 ? "" : usersCount}
+          {count === 0 ? "" : count}
         </p>
       </div>
     </header>
