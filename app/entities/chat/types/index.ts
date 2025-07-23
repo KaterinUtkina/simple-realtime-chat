@@ -22,7 +22,3 @@ export interface ChatState {
   isTouchDevice: boolean;
   usersCount: number;
 }
-
-export interface ChatSliceState {
-  chat: ChatState;
-}

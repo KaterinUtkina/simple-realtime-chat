@@ -1,20 +1,16 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
+import { Avatar } from "antd";
+import { MOBILE_MAX } from "@/app/shared/enum";
 
-const ldsDefault = keyframes`
-  0%, 20%, 80%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.5);
-  }
-`;
+export const StyledAvatar = styled(Avatar)<{ $bg: string }>`
+  background-color: ${(props) => props.$bg};
+  width: 40px;
+  height: 40px;
+  font-size: 20px !important;
 
-export const Dot = styled.span<{ $delay: string }>`
-  width: 0.25rem;
-  height: 0.25rem;
-  background-color: #8b5cf6;
-  border-radius: 9999px;
-  display: inline-block;
-  animation: ${ldsDefault} 1.2s linear infinite;
-  animation-delay: ${(props) => props.$delay};
+  @media (max-width: ${MOBILE_MAX}) {
+    width: 24px;
+    height: 24px;
+    font-size: 14px !important;
+  }
 `;

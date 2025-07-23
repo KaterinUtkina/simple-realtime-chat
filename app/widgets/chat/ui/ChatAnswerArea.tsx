@@ -1,10 +1,9 @@
-import { memo } from "react";
 import { useChatAnswer } from "@/app/widgets/chat/hooks/useChatAnswer";
 import MicrophoneIcon from "@/app/shared/ui/icon/MicrophoneIcon.svg";
 import StopIcon from "@/app/shared/ui/icon/StopIcon.svg";
 import SendIcon from "@/app/shared/ui/icon/SendIcon.svg";
 
-const ChatAnswerArea = memo(function ChatAnswerArea() {
+const ChatAnswerArea = () => {
   const {
     rows,
     handleChange,
@@ -18,9 +17,13 @@ const ChatAnswerArea = memo(function ChatAnswerArea() {
   } = useChatAnswer();
 
   return (
-    <div onKeyDown={handleKeyDown} className={"pb-4"}>
+    <form onKeyDown={handleKeyDown} className={"mb-4"}>
       <div className={"flex gap-2 relative"}>
-        <label className={"grow shadow-md rounded-md p-3 bg-white flex"}>
+        <div
+          className={
+            "grow shadow-md rounded-md p-4 bg-white dark:bg-gray-800 flex"
+          }
+        >
           <textarea
             className={"resize-none focus:outline-none w-full mr-24"}
             rows={rows}
@@ -30,11 +33,11 @@ const ChatAnswerArea = memo(function ChatAnswerArea() {
             placeholder={"Enter answer here..."}
             {...settingsTextarea}
           ></textarea>
-        </label>
+        </div>
         <button
           type={"button"}
           className={
-            "rounded-md p-1 shrink-0 mt-auto absolute right-14 bottom-1.5"
+            "rounded-md p-1 shrink-0 mt-auto absolute right-14 bottom-2"
           }
           onClick={recordHandler}
         >
@@ -47,15 +50,15 @@ const ChatAnswerArea = memo(function ChatAnswerArea() {
         <button
           type={"button"}
           className={
-            "bg-violet-400 p-2.5 rounded-md shrink-0 mt-auto absolute right-2 bottom-1.5"
+            "bg-violet-400 p-2.5 rounded-md shrink-0 mt-auto absolute right-2 bottom-2"
           }
           onClick={submitHandler}
         >
           <SendIcon className={"w-4 h-4 fill-white"} />
         </button>
       </div>
-    </div>
+    </form>
   );
-});
+};
 
 export default ChatAnswerArea;

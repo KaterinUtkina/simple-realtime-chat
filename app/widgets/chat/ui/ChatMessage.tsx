@@ -8,7 +8,7 @@ type Props = {
   message: ChatMessageT;
 };
 
-const ChatMessage = memo(function ChatMessage({ message }: Props) {
+const ChatMessage = ({ message }: Props) => {
   switch (message.type) {
     case ChatMessageTypes.SYSTEM:
       return <SystemMessage message={message} />;
@@ -18,6 +18,6 @@ const ChatMessage = memo(function ChatMessage({ message }: Props) {
       return <UserMessage message={message} />;
     }
   }
-});
+};
 
-export default ChatMessage;
+export default memo(ChatMessage);

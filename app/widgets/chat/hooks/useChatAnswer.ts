@@ -7,12 +7,11 @@ import {
   useState,
 } from "react";
 import { AudioRecorderPlugin } from "audio-recorder-plugin";
-import { MessageContent } from "@/app/entities/chat/types";
-import { ChatMessageTypes, KeyboardKey } from "@/app/widgets/chat/enum";
-import { websocketService } from "@/app/shared/services/WebsoketService";
-import { useSelector } from "react-redux";
-import { isTouchDevice, userId } from "@/app/entities/chat/model/selectors";
-import { getAudioDataUrl } from "@/app/shared/helpers/common";
+import { KeyboardKey } from "@/app/widgets/chat/enum";
+import { useDispatch, useSelector } from "react-redux";
+import { isTouchDevice } from "@/app/entities/chat/model/selectors";
+import { sendMessageThunk } from "@/app/entities/chat/model/thunks";
+import { RootDispatch } from "@/app/shared/store/types";
 
 export function useChatAnswer() {
   const [answer, setAnswer] = useState<string>("");
@@ -22,45 +21,17 @@ export function useChatAnswer() {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const MAX_ROWS = 6;
   const recorder = useRef(new AudioRecorderPlugin());
-  const currentUser = useSelector(userId);
   const isTouch = useSelector(isTouchDevice);
-
-  const sendAnswerHandler = useCallback(
-    async (content: MessageContent) => {
-      if (!currentUser) return;
-
-      let params = {};
-      if (typeof content === "string") {
-        params = {
-          author: currentUser,
-          content,
-          type: ChatMessageTypes.USER,
-        };
-      } else if (content instanceof HTMLAudioElement) {
-        try {
-          const audioUrl = await getAudioDataUrl(content);
-          params = {
-            author: currentUser,
-            content: audioUrl,
-            type: ChatMessageTypes.USER_AUDIO,
-          };
-        } catch (err) {
-          console.log("Ошибка получения url записи", err);
-        }
-      }
-      websocketService.sendMessage("user_chat", params);
-    },
-    [currentUser],
-  );
+  const dispatch = useDispatch<RootDispatch>();
 
   const submitHandler = useCallback(async () => {
     if (!(answer.length || audio)) return;
 
     const message = audio ? audio : answer;
 
-    await sendAnswerHandler(message);
+    dispatch(sendMessageThunk(message));
     resetData();
-  }, [answer, audio, sendAnswerHandler]);
+  }, [answer, audio, dispatch]);
 
   useEffect(() => {
     if (audio) {
@@ -95,7 +66,7 @@ export function useChatAnswer() {
     }
   };
 
-  const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
+  const handleKeyDown: KeyboardEventHandler<HTMLFormElement> = (event) => {
     if (event.key === KeyboardKey.ENTER && event.shiftKey) {
       return;
     }

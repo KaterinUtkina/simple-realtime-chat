@@ -1,25 +1,27 @@
 import { memo, useMemo } from "react";
 import { ChatMessage as ChatMessageT } from "@/app/entities/chat/types";
-import UserIcon from "@/app/shared/ui/icon/UserIcon.svg";
 import { ChatMessageTypes } from "@/app/widgets/chat/enum";
 import { useSelector } from "react-redux";
 import { userId } from "@/app/entities/chat/model/selectors";
+import { formatTime } from "@/app/shared/utils/common";
+import { UserOutlined } from "@ant-design/icons";
+import { StyledAvatar } from "@/app/widgets/chat/styles";
 
 type Props = {
   message: ChatMessageT;
 };
 
 const colors = [
-  "bg-red-400",
-  "bg-green-400",
-  "bg-blue-400",
-  "bg-yellow-400",
-  "bg-pink-400",
-  "bg-indigo-400",
-  "bg-purple-400",
-  "bg-orange-400",
-  "bg-teal-400",
-  "bg-cyan-400",
+  "#F87171",
+  "#34D399",
+  "#60A5FA",
+  "#FBBF24",
+  "#F472B6",
+  "#818CF8",
+  "#A78BFA",
+  "#FB923C",
+  "#2DD4BF",
+  "#22D3EE",
 ];
 
 const getColorByUserId = (userId: string) => {
@@ -31,7 +33,7 @@ const getColorByUserId = (userId: string) => {
   return colors[index];
 };
 
-const UserMessage = memo(function UserMessage({ message }: Props) {
+const UserMessage = ({ message }: Props) => {
   const currentUser = useSelector(userId);
 
   const bgColor = useMemo(
@@ -45,36 +47,38 @@ const UserMessage = memo(function UserMessage({ message }: Props) {
         <div className="flex justify-end relative mb-5 gap-3">
           <div
             className={
-              "p-3 rounded-2xl bg-white max-w-full md:max-w-lg w-fit shadow-md"
+              "p-3 pr-12 rounded-2xl bg-white dark:bg-gray-800 max-w-full md:max-w-lg w-fit shadow-md"
             }
           >
             {message.type === ChatMessageTypes.USER ? (
-              <p className="break-words">{message.content as string}</p>
+              <p className="break-words !m-0">{message.content as string}</p>
             ) : (
               <audio src={message.content} controls />
             )}
+            <span className="text-xs text-gray-400 absolute bottom-1 right-2">
+              {formatTime(message.timestamp)}
+            </span>
           </div>
         </div>
       ) : (
         <div className="flex gap-2 md:gap-4 mb-5 items-start">
+          <StyledAvatar icon={<UserOutlined />} $bg={bgColor} />
           <div
-            className={`flex items-center justify-center shrink-0 ${bgColor} w-6 h-6 md:w-10 md:h-10 rounded-full overflow-hidden`}
-          >
-            <UserIcon className="w-full h-full pt-1 fill-white" />
-          </div>
-          <div
-            className={`${message.type === ChatMessageTypes.USER ? "p-3" : "px-1 py-3"} rounded-2xl bg-white max-w-[calc(100%-32px)] md:max-w-lg w-fit shadow-md`}
+            className={`${message.type === ChatMessageTypes.USER ? "p-3 pr-12" : "px-1 py-3 pr-12 pb-2"} rounded-2xl bg-white dark:bg-gray-800 max-w-[calc(100%-32px)] md:max-w-lg w-fit shadow-md relative`}
           >
             {message.type === ChatMessageTypes.USER ? (
-              <p className="break-words">{message.content as string}</p>
+              <p className="break-words !m-0">{message.content as string}</p>
             ) : (
               <audio src={message.content} controls />
             )}
+            <span className="text-xs text-gray-400 absolute bottom-1 right-2">
+              {formatTime(message.timestamp)}
+            </span>
           </div>
         </div>
       )}
     </>
   );
-});
+};
 
-export default UserMessage;
+export default memo(UserMessage);

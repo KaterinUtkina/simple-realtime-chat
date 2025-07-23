@@ -9,10 +9,21 @@ import {
   setIsTouchDevice,
   updateUsersCount,
 } from "@/app/entities/chat/model/slice";
+import { useTheme } from "@/app/ThemeContext";
 
 export function useChat() {
   const WEBSOCKET_URL = "wss://chat-ws-ai-server.onrender.com";
   const dispatch = useDispatch();
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+  }, [theme]);
 
   const checkTouchDevice = useCallback(() => {
     dispatch(setIsTouchDevice(navigator.maxTouchPoints > 0));

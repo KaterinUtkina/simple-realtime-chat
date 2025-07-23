@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "antd/dist/reset.css";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --window-height: 100dvh;
