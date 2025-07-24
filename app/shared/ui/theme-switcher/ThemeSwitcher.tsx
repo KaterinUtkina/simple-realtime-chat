@@ -13,6 +13,11 @@ const StyledSwitch = styled(Switch)`
       }
     }
   }
+
+  .ant-switch-inner-checked {
+    display: flex !important;
+    align-items: center;
+  }
 `;
 
 const ThemeSwitcher = () => {

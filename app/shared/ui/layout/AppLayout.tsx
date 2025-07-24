@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-const Layout = memo(function Layout({
+const AppLayout = memo(function Layout({
   headerChildren,
   children,
 }: Readonly<{
@@ -19,4 +19,4 @@ const Layout = memo(function Layout({
   );
 });
 
-export default Layout;
+export default AppLayout;

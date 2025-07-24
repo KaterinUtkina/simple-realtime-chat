@@ -2,7 +2,7 @@
 import UsersIcon from "@/app/shared/ui/icon/UsersIcon.svg";
 import { useSelector } from "react-redux";
 import { usersCount } from "@/app/entities/chat/model/selectors";
-import ThemeSwitcher from "@/app/shared/ui/ThemeSwitcher";
+import ThemeSwitcher from "@/app/shared/ui/theme-switcher";
 
 const ChatHeader = () => {
   const count = useSelector(usersCount);

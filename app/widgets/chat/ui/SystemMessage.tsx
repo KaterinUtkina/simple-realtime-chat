@@ -7,7 +7,7 @@ type Props = {
 
 const SystemMessage = ({ message }: Props) => {
   return (
-    <div className="text-center text-gray-500 text-sm my-4">
+    <div className="text-center text-gray-500 dark:text-gray-200 text-sm my-4">
       {message.content as string}
     </div>
   );

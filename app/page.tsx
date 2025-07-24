@@ -1,11 +1,11 @@
 import Chat from "@/app/widgets/chat/ui/Chat";
-import Layout from "@/app/shared/ui/Layout";
 import ChatHeader from "@/app/widgets/chat/ui/ChatHeader";
+import AppLayout from "@/app/shared/ui/layout/AppLayout";
 
 export default function Home() {
   return (
-    <Layout headerChildren={<ChatHeader />}>
+    <AppLayout headerChildren={<ChatHeader />}>
       <Chat />
-    </Layout>
+    </AppLayout>
   );
 }
